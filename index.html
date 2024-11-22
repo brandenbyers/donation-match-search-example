@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Donation Match Checker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    #search-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #search-form input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #000;
+      border-radius: 0;
+      font-size: 16px;
+    }
+
+    #search-form input[type="submit"] {
+      padding: 10px 20px;
+      border: 2px solid #000;
+      background-color: #fff;
+      color: #000;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    #results {
+      margin-top: 30px;
+      font-size: 18px;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .match {
+      color: green;
+    }
+
+    .no-match {
+      color: red;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    li a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Donation Match Checker</h1>
+  <form id="search-form">
+    <input type="text" id="search-term" placeholder="Enter employer name">
+    <input type="submit" value="Search">
+  </form>
+
+  <div id="results"></div>
+
+  <script>
+    const protocol = 'https://';
+    const domains = ['benevity.org/user/login'];
+
+    document.getElementById('search-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const searchTerm = document.getElementById('search-term').value.trim().toLowerCase();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      if (!searchTerm) {
+        resultsDiv.innerHTML = '<p class="no-match">Please search for your employer.</p>';
+        return;
+      }
+
+      let words = searchTerm.split(' ');
+      function trySearch(wordsArray) {
+        if (wordsArray.length === 0) {
+          resultsDiv.innerHTML = '<p class="no-match">No match found.</p><p>Your employer may still match your donation.<br />Inquire with HR or PeopleOps at your company.</p>';
+          return;
+        }
+
+        const currentTerm = wordsArray.join('').toLowerCase();
+        const urlsToCheck = domains.map(domain => `${protocol}${currentTerm}.${domain}`);
+        let matches = [];
+        let checked = 0;
+
+        urlsToCheck.forEach(url => {
+          fetch(url, { method: 'HEAD', mode: 'no-cors' })
+            .then(response => {
+              if (response.ok || response.type === 'opaque') {
+                matches.push(url);
+              }
+            })
+            .catch(() => {
+              // URL not reachable
+            })
+            .finally(() => {
+              checked++;
+              if (checked === urlsToCheck.length) {
+                if (matches.length > 0) {
+                  const listItems = matches.map(u => `<li><a href="${u}" target="_blank">${u}</a></li>`).join('');
+                  resultsDiv.innerHTML = `<p class="match">Match found:</p><ul>${listItems}</ul>`;
+                } else {
+                  // Remove last word and try again
+                  wordsArray.pop();
+                  trySearch(wordsArray);
+                }
+              }
+            });
+        });
+      }
+
+      trySearch(words.slice());
+    });
+  </script>
+
+</body>
+
+</html>
