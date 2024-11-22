@@ -4,54 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <title>Donation Match Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* Minimalist CSS styling with responsive design */
     body {
       margin: 0;
-      padding: 0;
+      padding: 20px;
       font-family: Arial, sans-serif;
       background-color: #fff;
       color: #000;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
 
     h1 {
-      font-size: 48px;
+      font-size: 2em;
       margin-bottom: 20px;
+      text-align: center;
     }
 
     #search-form {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
+      width: 100%;
+      max-width: 400px;
     }
 
     #search-form input[type="text"] {
-      width: 300px;
       padding: 10px;
       margin-bottom: 10px;
       border: 2px solid #000;
       border-radius: 0;
-      font-size: 16px;
+      font-size: 1em;
     }
 
     #search-form input[type="submit"] {
-      padding: 10px 20px;
+      padding: 10px;
       border: 2px solid #000;
       background-color: #fff;
       color: #000;
-      font-size: 16px;
+      font-size: 1em;
       cursor: pointer;
       border-radius: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #search-form input[type="submit"]:hover {
+      background-color: #000;
+      color: #fff;
     }
 
     #results {
       margin-top: 30px;
-      font-size: 18px;
+      font-size: 1.2em;
       text-align: center;
+      width: 100%;
       max-width: 600px;
     }
 
@@ -66,15 +77,34 @@
     ul {
       list-style: none;
       padding: 0;
+      margin-top: 10px;
     }
 
     li a {
       color: #000;
       text-decoration: none;
+      word-break: break-all;
     }
 
     li a:hover {
       text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5em;
+      }
+
+      #search-form input[type="text"],
+      #search-form input[type="submit"] {
+        font-size: 0.9em;
+        padding: 8px;
+      }
+
+      #results {
+        font-size: 1em;
+      }
     }
   </style>
 </head>
